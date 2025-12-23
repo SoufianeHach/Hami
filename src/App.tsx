@@ -28,36 +28,49 @@ const COSTUMES = [
   { id: 'samurai', name: 'Narbiger Ronin', price: 150, lvl: 0, color: '#880E4F' },
   { id: 'cyber', name: 'Cyberpunk', price: 200, lvl: 0, color: '#00E5FF' },
   { id: 'dino', name: 'Hami-Saurus', price: 150, lvl: 0, color: '#4CAF50' },
-  { id: 'unicorn', name: 'Regenbogen-Horn', price: 250, lvl: 0, color: '#F48FB1' },
-  { id: 'astronaut', name: 'Hami-naut', price: 200, lvl: 0, color: '#CFD8DC' }
+  { id: 'unicorn', name: 'Einhorn', price: 250, lvl: 0, color: '#F48FB1' },
+  { id: 'astronaut', name: 'Hami-naut', price: 200, lvl: 0, color: '#CFD8DC' },
+  { id: 'ghost', name: 'Geist', price: 100, lvl: 0, color: '#F5F5F5' },
+  { id: 'chef', name: 'Sternekoch', price: 100, lvl: 0, color: '#FFFFFF' }
+  // Weitere Skins folgen derselben Logik...
 ];
 
-// --- HINTERGRUND ANIMATION ---
+// --- HINTERGRUND DEKO ---
 const BackgroundDecor = () => (
   <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
     {[...Array(15)].map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute text-pink-200 opacity-30"
-        initial={{ y: "110vh", x: Math.random() * 100 + "vw", rotate: 0 }}
+      <motion.div key={i} className="absolute text-pink-200 opacity-30"
+        initial={{ y: "110vh", x: Math.random() * 100 + "vw" }}
         animate={{ y: "-10vh", rotate: 360 }}
-        transition={{ duration: Math.random() * 10 + 10, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: Math.random() * 10 + 15, repeat: Infinity, ease: "linear" }}
       >
-        {i % 2 === 0 ? <Heart size={Math.random() * 30 + 20} fill="currentColor" /> : <Star size={Math.random() * 20 + 10} fill="currentColor" />}
+        <Heart size={Math.random() * 30 + 20} fill="currentColor" />
       </motion.div>
     ))}
   </div>
 );
 
-// --- GRAFIK ENGINE ---
+// --- DER ÜBERARBEITETE HAMI-AVATAR (GRAFIK-CORE) ---
 const HamiRender = ({ id, isWorking }: { id: string, isWorking: boolean }) => {
   const c = useMemo(() => COSTUMES.find(x => x.id === id) || COSTUMES[0], [id]);
-  
+  const [isBlinking, setIsBlinking] = useState(false);
+
+  useEffect(() => {
+    const b = setInterval(() => { setIsBlinking(true); setTimeout(() => setIsBlinking(false), 150); }, 4000);
+    return () => clearInterval(b);
+  }, []);
+
   return (
     <motion.div className="relative z-10" animate={isWorking ? { x: [-8, 8, -8], rotate: [-2, 2, -2] } : { y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 2.5 }}>
       <svg width="260" height="260" viewBox="0 0 200 200" className="drop-shadow-2xl overflow-visible">
         
-        {/* Back-Layer Accessories */}
+        {/* BACK LAYER (Wings, Swords, Tails) */}
+        {id === 'angel' && (
+          <motion.g animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 2 }} fill="white" opacity="0.6">
+             <path d="M 40 100 Q 0 40 40 60 Q 10 90 40 110" />
+             <path d="M 160 100 Q 200 40 160 60 Q 190 90 160 110" />
+          </motion.g>
+        )}
         {id === 'samurai' && (
           <g transform="translate(145, 60) rotate(45)">
             <rect width="8" height="60" fill="#333" rx="2" />
@@ -65,13 +78,16 @@ const HamiRender = ({ id, isWorking }: { id: string, isWorking: boolean }) => {
           </g>
         )}
 
-        {/* Body */}
+        {/* OHREN */}
         <circle cx="65" cy="55" r="18" fill={c.color} stroke="#E8D5B5" strokeWidth="2" />
         <circle cx="135" cy="55" r="18" fill={c.color} stroke="#E8D5B5" strokeWidth="2" />
+        
+        {/* KÖRPER (DETAILED) */}
         <ellipse cx="100" cy="120" rx="85" ry="75" fill="#FFFFFF" stroke="#E8D5B5" strokeWidth="3" />
         <path d="M 35 110 Q 100 35, 165 110" fill={c.color} opacity="0.9" />
+        <ellipse cx="100" cy="135" rx="35" ry="30" fill="#FFF5EE" opacity="0.4" />
 
-        {/* Costume Overlays */}
+        {/* KOSTÜM OVERLAYS */}
         {id === 'santa' && (
           <g>
             <path d="M 60 65 L 100 10 L 140 65 Z" fill="#D32F2F" />
@@ -79,45 +95,46 @@ const HamiRender = ({ id, isWorking }: { id: string, isWorking: boolean }) => {
             <circle cx="100" cy="10" r="8" fill="white" />
           </g>
         )}
-        
         {id === 'ninja' && (
           <g>
             <rect x="40" y="70" width="120" height="28" fill="#333" />
             <rect x="80" y="74" width="40" height="20" fill="#AAA" rx="2" />
-            <g stroke="#333" strokeWidth="1.5">
-              <line x1="90" y1="78" x2="90" y2="90" />
-              <line x1="96" y1="78" x2="96" y2="90" />
-              <line x1="102" y1="78" x2="102" y2="90" />
-              <line x1="108" y1="78" x2="108" y2="90" />
+            <g stroke="#444" strokeWidth="1.5">
+              <line x1="91" y1="78" x2="91" y2="90" /><line x1="97" y1="78" x2="97" y2="90" />
+              <line x1="103" y1="78" x2="103" y2="90" /><line x1="109" y1="78" x2="109" y2="90" />
             </g>
           </g>
         )}
-
         {id === 'king' && (
           <g>
             <path d="M 55 55 L 65 20 L 82 45 L 100 15 L 118 45 L 135 20 L 145 55 Z" fill="#FFD700" stroke="#B8860B" strokeWidth="2" />
-            <circle cx="100" cy="25" r="4" fill="red" />
-            <circle cx="68" cy="30" r="3" fill="blue" />
-            <circle cx="132" cy="30" r="3" fill="green" />
+            <circle cx="100" cy="25" r="4" fill="red" /><circle cx="68" cy="30" r="3" fill="blue" /><circle cx="132" cy="30" r="3" fill="green" />
+          </g>
+        )}
+        {id === 'knight' && <g><rect x="50" y="45" width="100" height="50" rx="10" fill="#90A4AE" /><rect x="65" y="65" width="70" height="5" fill="#37474F" /></g>}
+        {id === 'wizard' && <path d="M 45 70 L 100 -10 L 155 70 Z" fill="#311B92" />}
+        {id === 'gnome' && <g><path d="M 60 65 L 100 0 L 140 65 Z" fill="#1B5E20" /><path d="M 70 125 Q 100 180, 130 125" fill="white" /></g>}
+        {id === 'unicorn' && <path d="M 100 45 L 110 5 L 120 45 Z" fill="url(#rainbow)" stroke="#BA68C8" />}
+        {id === 'cyber' && (
+          <g>
+            <rect x="55" y="80" width="90" height="25" fill="rgba(0, 229, 255, 0.4)" stroke="#00E5FF" strokeWidth="2" rx="4" />
+            <motion.path d="M 40 80 L 20 60" stroke="#00E5FF" animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity }} />
           </g>
         )}
 
-        {id === 'unicorn' && (
-          <g>
-            <path d="M 100 45 L 110 5 L 120 45 Z" fill="#E1BEE7" stroke="#BA68C8" />
-            <path d="M 102 40 L 110 10 M 106 35 L 110 20" stroke="white" strokeWidth="1" />
+        {/* AUGEN LAYER */}
+        {isBlinking ? (
+          <g stroke="#333" strokeWidth="4" strokeLinecap="round">
+            <line x1="65" y1="95" x2="85" y2="95" /><line x1="115" y1="95" x2="135" y2="95" />
           </g>
-        )}
-
-        {/* Eyes Layer */}
-        {id === 'ninja' ? (
+        ) : id === 'ninja' ? (
           <g>
-            <circle cx="75" cy="95" r="11" fill="#D1C4E9" stroke="#9575CD" strokeWidth="1" />
-            <circle cx="75" cy="95" r="7" fill="none" stroke="#9575CD" strokeWidth="1" />
-            <circle cx="75" cy="95" r="3" fill="none" stroke="#9575CD" strokeWidth="1" />
-            <circle cx="125" cy="95" r="11" fill="#D1C4E9" stroke="#9575CD" strokeWidth="1" />
-            <circle cx="125" cy="95" r="7" fill="none" stroke="#9575CD" strokeWidth="1" />
-            <circle cx="125" cy="95" r="3" fill="none" stroke="#9575CD" strokeWidth="1" />
+             <circle cx="75" cy="95" r="11" fill="#D1C4E9" stroke="#9575CD" />
+             <circle cx="75" cy="95" r="7" fill="none" stroke="#9575CD" opacity="0.5" />
+             <circle cx="75" cy="95" r="3" fill="none" stroke="#9575CD" opacity="0.3" />
+             <circle cx="125" cy="95" r="11" fill="#D1C4E9" stroke="#9575CD" />
+             <circle cx="125" cy="95" r="7" fill="none" stroke="#9575CD" opacity="0.5" />
+             <circle cx="125" cy="95" r="3" fill="none" stroke="#9575CD" opacity="0.3" />
           </g>
         ) : (
           <g>
@@ -128,27 +145,41 @@ const HamiRender = ({ id, isWorking }: { id: string, isWorking: boolean }) => {
           </g>
         )}
 
-        {id === 'samurai' && <path d="M 115 80 L 135 110" stroke="#B71C1C" strokeWidth="2" opacity="0.6" />}
+        {id === 'samurai' && <path d="M 115 80 L 135 110" stroke="#B71C1C" strokeWidth="2" opacity="0.7" />}
 
-        {/* Mouth Layer */}
-        {id === 'dino' ? (
-          <g>
-            <path d="M 85 125 Q 100 145, 115 125" fill="none" stroke="#333" strokeWidth="3" />
-            <path d="M 90 126 L 93 133 L 96 126" fill="white" />
-            <path d="M 104 126 L 107 133 L 110 126" fill="white" />
-          </g>
-        ) : (
-          <path d="M 90 125 Q 100 135, 110 125" fill="none" stroke="#333" strokeWidth="3" strokeLinecap="round" />
-        )}
-
-        {/* Blushes & Whiskers */}
+        {/* GESICHT DETAILS */}
         <circle cx="55" cy="115" r="10" fill="#FFB6C1" opacity="0.4" />
         <circle cx="145" cy="115" r="10" fill="#FFB6C1" opacity="0.4" />
         <g stroke="#D2B48C" strokeWidth="1">
-          <line x1="50" y1="110" x2="20" y2="105" /><line x1="50" y1="118" x2="20" y2="125" />
-          <line x1="150" y1="110" x2="180" y2="105" /><line x1="150" y1="118" x2="180" y2="125" />
+           <line x1="50" y1="110" x2="20" y2="105" /><line x1="50" y1="118" x2="20" y2="125" />
+           <line x1="150" y1="110" x2="180" y2="105" /><line x1="150" y1="118" x2="180" y2="125" />
         </g>
+        
+        {/* MUND & ZÄHNE */}
         <circle cx="100" cy="110" r="6" fill="#FF80AB" />
+        {id === 'dino' ? (
+          <g>
+            <path d="M 85 125 Q 100 145, 115 125" fill="none" stroke="#333" strokeWidth="3" />
+            <path d="M 92 126 L 95 133 L 98 126 M 102 126 L 105 133 L 108 126" fill="white" />
+          </g>
+        ) : (
+          <g>
+            <path d="M 90 125 Q 100 135, 110 125" fill="none" stroke="#333" strokeWidth="3" strokeLinecap="round" />
+            <rect x="96" y="118" width="8" height="6" fill="white" stroke="#333" strokeWidth="1" />
+          </g>
+        )}
+
+        {/* PFOTEN */}
+        <ellipse cx="70" cy="150" rx="12" ry="10" fill="white" stroke="#E8D5B5" />
+        <ellipse cx="130" cy="150" rx="12" ry="10" fill="white" stroke="#E8D5B5" />
+        <ellipse cx="75" cy="185" rx="14" ry="8" fill="#FFC0CB" opacity="0.6" />
+        <ellipse cx="125" cy="185" rx="14" ry="8" fill="#FFC0CB" opacity="0.6" />
+
+        <defs>
+          <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#FF00FF" /><stop offset="100%" stopColor="#00FFFF" />
+          </linearGradient>
+        </defs>
       </svg>
     </motion.div>
   );
@@ -186,7 +217,7 @@ export default function App() {
       setAffection(p => Math.max(0, p - 0.05));
       if (Math.random() < 0.005 && poops.length < 5) setPoops(p => [...p, { id: Date.now(), x: Math.random() * 60 + 20, y: Math.random() * 50 + 30 }]);
       if (isWorking && workLeft > 0) setWorkLeft(t => t - 1);
-      else if (isWorking) { setIsWorking(false); setCoins(c => c + 50); setXp(x => x + 50); say(QUOTES.feed); }
+      else if (isWorking) { setIsWorking(false); setCoins(c => c + 50); setXp(x => x + 50); }
     }, 1000);
     return () => clearInterval(loop);
   }, [isWorking, workLeft, poops.length]);
@@ -230,7 +261,7 @@ export default function App() {
         <div className="bg-white/80 backdrop-blur-sm p-4 rounded-[2rem] shadow-lg border-4 border-pink-100 flex flex-col items-center">
           <Trophy className="text-pink-400 mb-1" />
           <span className="text-2xl font-black italic text-pink-600">LVL {level}</span>
-          <div className="w-full h-2 bg-pink-50 rounded-full mt-2 overflow-hidden border border-pink-100"><motion.div animate={{ width: `${xp % 100}%` }} className="h-full bg-pink-400 shadow-sm" /></div>
+          <div className="w-full h-2 bg-pink-50 rounded-full mt-2 overflow-hidden border border-pink-100"><motion.div animate={{ width: `${xp % 100}%` }} className="h-full bg-pink-400" /></div>
         </div>
         <div className="bg-white/80 backdrop-blur-sm p-4 rounded-[2rem] shadow-lg border-4 border-pink-100 flex flex-col items-center">
           <Coins className="text-amber-400 mb-1" />
@@ -266,13 +297,11 @@ export default function App() {
         </div>
 
         <div className="w-full md:w-1/3 space-y-4">
-          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-[2.5rem] shadow-xl border-4 border-pink-50 text-center">
-            <h3 className="text-[10px] font-black uppercase text-pink-300 mb-4 tracking-widest italic font-black">Snacks</h3>
-            <div className="flex justify-around">
+          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-[2.5rem] shadow-xl border-4 border-pink-50 text-center text-pink-400 font-black italic">
+             Thomai's Spezialitäten
+            <div className="flex justify-around mt-4">
               {['🌻','🍝','🍕','🍟','🥗'].map((e, i) => (
-                <button key={i} onClick={() => {if(hunger<90){setHunger(h=>Math.min(100,h+20)); setXp(x=>x+15); say(QUOTES.feed)} else {say(QUOTES.fat)}}} className="text-4xl hover:scale-125 transition-transform p-2">
-                  {e}
-                </button>
+                <button key={i} onClick={() => {if(hunger<90){setHunger(h=>Math.min(100,h+20)); setXp(x=>x+15); say(QUOTES.feed)} else {say(QUOTES.fat)}}} className="text-4xl hover:scale-125 transition-transform">{e}</button>
               ))}
             </div>
           </div>
@@ -289,7 +318,6 @@ export default function App() {
                     <button key={c.id} onClick={() => {
                         if(canUse){ setCurrentId(c.id); } 
                         else if(c.lvl === 0 && coins >= c.price){ setCoins(coins-c.price); setUnlocked([...unlocked, c.id]); setCurrentId(c.id); }
-                        else if(c.lvl > 0 && level < c.lvl){ say([`Level ${c.lvl} benötigt! Ich bin noch nicht bereit!`]); }
                     }} className={`p-2 rounded-2xl border-2 text-[10px] font-black uppercase transition-all ${currentId === c.id ? 'border-pink-400 bg-pink-50 text-pink-600' : 'border-pink-50 text-pink-300'} ${!canUse ? 'opacity-50' : ''}`}>
                       {c.name} {!canUse && <div className="text-[8px] font-bold">{c.lvl > 0 ? `LVL ${c.lvl}` : `💰 ${c.price}`}</div>}
                     </button>
@@ -303,33 +331,21 @@ export default function App() {
       <AnimatePresence>
         {gameActive && (
           <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="fixed inset-0 bg-pink-300 z-[200] p-8 flex flex-col items-center">
-             <div className="flex justify-between w-full max-w-2xl mb-4 text-white font-black italic text-4xl uppercase drop-shadow-md">
+             <div className="flex justify-between w-full max-w-2xl mb-4 text-white font-black italic text-4xl uppercase">
                  <h2>KERNE: {gameScore}</h2>
                  <h2>ZEIT: {gameTime}S</h2>
              </div>
-             <div className="relative w-full h-full max-w-2xl bg-white/30 rounded-[3rem] overflow-hidden cursor-crosshair border-8 border-white/40">
+             <div className="relative w-full h-full max-w-2xl bg-white/30 rounded-[3rem] overflow-hidden border-8 border-white/40">
                <AnimatePresence>
                  {seeds.map(s => (
-                   <motion.div 
-                    key={s.id} initial={{y:-100, x:`${s.x}%`}} animate={{y:1000}} exit={{scale:0, opacity:0}}
+                   <motion.div key={s.id} initial={{y:-100, x:`${s.x}%`}} animate={{y:1000}} exit={{scale:0}}
                     onClick={(e) => { e.stopPropagation(); if(gameScore < 40){setGameScore(prev => prev + 1); setSeeds(prev => prev.filter(x => x.id !== s.id));}}} 
-                    transition={{duration:2, ease:"linear"}} className="absolute text-5xl cursor-pointer select-none"
+                    transition={{duration:2, ease:"linear"}} className="absolute text-5xl cursor-pointer"
                    >🌻</motion.div>
                  ))}
                </AnimatePresence>
              </div>
           </motion.div>
-        )}
-
-        {gameResult !== null && (
-            <motion.div initial={{opacity:0, scale:0.5}} animate={{opacity:1, scale:1}} exit={{opacity:0}} className="fixed inset-0 bg-pink-900/40 backdrop-blur-sm z-[250] flex items-center justify-center p-8">
-                <div className="bg-white p-10 rounded-[3rem] text-center shadow-2xl border-8 border-pink-400">
-                    <h2 className="text-4xl font-black mb-4 italic uppercase text-pink-600">ERGEBNIS</h2>
-                    <p className="text-2xl font-bold mb-2 text-pink-400 tracking-tight">Du hast <span className="text-pink-600">{gameResult}</span> Kerne gefangen!</p>
-                    <p className="text-xl text-emerald-500 font-black mb-8 italic">+{gameResult} XP erhalten</p>
-                    <button onClick={() => setGameResult(null)} className="bg-pink-500 text-white px-10 py-4 rounded-3xl font-black uppercase tracking-widest hover:bg-pink-600 shadow-lg active:scale-95 transition-all">Super!</button>
-                </div>
-            </motion.div>
         )}
       </AnimatePresence>
 
