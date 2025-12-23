@@ -6,7 +6,7 @@ import { Heart, Sparkles, Moon, Trash2, Play, Lock, Trophy, Coins, Briefcase, Sh
 const QUOTES = {
   pet: ["Hach, wie weich! ✨", "Mmh, kraul mich weiter!", "Nicht die Frisur ruinieren!", "Du darfst mich huldigen!"],
   petFull: ["Ich bin wunschlos glücklich!", "Zuneigungslimit erreicht!", "Nerv nicht, Mensch!"],
-  feed: ["Thomai hat sich selbst übertroffen!", "Boah, Thomai kocht wie ein Gott!", "Ein Hoch auf Thomai's Küche!"],
+  feed: ["Thomai hat sich selbst übertroffen!", "Boah, Thomai kocht wie eine Meisterin!", "Ein Hoch auf Thomai's Küche!"],
   fat: ["Ich pass kaum noch durch die Röhre!", "Hör auf, ich rolle gleich!", "Ich bin pappsatt!"],
   workStart: ["Ab ins Büro... argh.", "Karriere ruft! Hami macht Cash!", "Zeit ist Gold."],
   workCancel: ["Früh Feierabend? Faulpelz!", "Karriere abgebrochen."],
@@ -152,7 +152,7 @@ const HamiRender = ({ id, isWorking }: { id: string, isWorking: boolean }) => {
            <line x1="150" y1="110" x2="180" y2="105" /><line x1="150" y1="118" x2="180" y2="125" />
         </g>
         
-        {/* HAMSTER-MUND & ZÄHNE */}
+        {/* HAMSTER-MUND & ZÄHNE (Zahn unter den Mund korrigiert) */}
         <circle cx="100" cy="110" r="5" fill="#FF80AB" />
         {id === 'dino' ? (
           <g>
@@ -163,7 +163,8 @@ const HamiRender = ({ id, isWorking }: { id: string, isWorking: boolean }) => {
           <g>
             {/* Süßer W-Mund */}
             <path d="M 88 120 Q 94 128, 100 120 Q 106 128, 112 120" fill="none" stroke="#333" strokeWidth="2.5" strokeLinecap="round" />
-            <rect x="97" y="118" width="6" height="5" fill="white" stroke="#333" strokeWidth="0.5" />
+            {/* Zahn: Jetzt Y-Position nach unten verschoben (124), damit er UNTER der Mundlinie ist */}
+            <rect x="97" y="124" width="6" height="5" fill="white" stroke="#333" strokeWidth="0.5" />
           </g>
         )}
 
@@ -218,7 +219,7 @@ export default function App() {
 
   useEffect(() => {
     const loop = setInterval(() => {
-      // SCHNELLERER HUNGER & LIEBE
+      // SCHNELLERER HUNGER & LIEBE (WIE GEWÜNSCHT)
       setHunger(p => Math.max(0, p - 0.05)); 
       setAffection(p => Math.max(0, p - 0.1)); 
       
@@ -287,7 +288,7 @@ export default function App() {
 
       <main className="w-full max-w-5xl flex flex-col md:flex-row gap-8 items-center justify-center z-10">
         <div className="w-full md:w-2/3 aspect-square bg-white/60 backdrop-blur-md rounded-[4rem] shadow-2xl relative border-8 border-white overflow-hidden flex items-center justify-center bg-gradient-to-b from-white to-pink-50">
-          <AnimatePresence>{message && <motion.div initial={{scale:0}} animate={{scale:1}} exit={{scale:0}} className="absolute top-10 z-50 bg-white/95 p-4 rounded-3xl shadow-xl border-2 border-pink-100 font-black max-w-[80%] text-center italic leading-tight">{message}</motion.div>}</AnimatePresence>
+          <AnimatePresence>{message && <motion.div initial={{scale:0}} animate={{scale:1}} exit={{scale:0}} className="absolute top-10 z-50 bg-white/95 p-4 rounded-3xl shadow-xl border-2 border-pink-100 font-black max-w-[80%] text-center text-pink-600 italic leading-tight">{message}</motion.div>}</AnimatePresence>
 
           {isWorking ? (
             <div className="text-center">
@@ -313,7 +314,7 @@ export default function App() {
             </div>
           </div>
 
-          <button onClick={() => {if(!isWorking){setIsWorking(true); setWorkLeft(1800); say(QUOTES.workStart)}}} className="w-full bg-pink-400 text-white p-6 rounded-[2.5rem] shadow-lg font-black flex items-center justify-center gap-4 hover:bg-pink-500 transition-all disabled:opacity-50" disabled={isWorking}><Briefcase /> ARBEITEN</button>
+          <button onClick={() => {if(!isWorking){setIsWorking(true); setWorkLeft(600); say(QUOTES.workStart)}}} className="w-full bg-pink-400 text-white p-6 rounded-[2.5rem] shadow-lg font-black flex items-center justify-center gap-4 hover:bg-pink-500 transition-all disabled:opacity-50" disabled={isWorking}><Briefcase /> ARBEITEN GEHEN (10m)</button>
           <button onClick={startGame} className="w-full bg-rose-400 text-white p-6 rounded-[2.5rem] shadow-lg font-black flex items-center justify-center gap-4 hover:bg-rose-500 transition-all"><Play /> MINIGAME</button>
 
           <div className="bg-white/80 backdrop-blur-sm p-6 rounded-[2.5rem] shadow-xl border-4 border-pink-50 max-h-60 overflow-y-auto">
